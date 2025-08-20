@@ -7,4 +7,5 @@ namespace store_api.Data;
 public class AppDbContext(DbContextOptions options) : IdentityDbContext(options)
 {
     public DbSet<AppUser> AppUsers { get; set; }
+    public DbSet<Product> Products { get; set; }
 }
