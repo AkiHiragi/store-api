@@ -1,0 +1,28 @@
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace store_api.Migrations
+{
+    /// <inheritdoc />
+    public partial class ChangedIdentityUserModelName : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.RenameColumn(
+                name: "Firstname",
+                table: "AspNetUsers",
+                newName: "FirstName");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.RenameColumn(
+                name: "FirstName",
+                table: "AspNetUsers",
+                newName: "Firstname");
+        }
+    }
+}

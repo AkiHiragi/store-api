@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using store_api.Data;
+using store_api.Models;
 
 namespace store_api.Extensions;
 
@@ -20,7 +21,7 @@ public static class PostgreSqlServiceExtension
 
     public static void AddPostgreSqlIdentityContext(this IServiceCollection services)
     {
-        services.AddIdentity<IdentityUser, IdentityRole>()
+        services.AddIdentity<AppUser, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>();
     }
 }
