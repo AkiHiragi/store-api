@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using store_api.Data;
+using store_api.ModelDto;
 using store_api.Models;
 
 namespace store_api.Controllers;
@@ -42,4 +43,10 @@ public class ProductController(AppDbContext dbContext) : StoreController(dbConte
 
         return Ok(new ResponseServer { StatusCode = HttpStatusCode.OK, Result = product });
     }
+
+    // [HttpPost]
+    // public async Task<ActionResult<ResponseServer>> CreateProduct([FromBody] ProductCreateDto dto)
+    // {
+    //     
+    // }
 }
