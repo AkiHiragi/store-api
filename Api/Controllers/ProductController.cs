@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ public class ProductController(AppDbContext dbContext) : StoreController(dbConte
     public async Task<ActionResult<List<Product>>> GetAllProducts()
     {
         var products = await dbContext.Products.AsNoTracking().ToListAsync();
-        return Ok(products);
+        var response = new ResponseServer { StatusCode = HttpStatusCode.OK, Result = products };
+        return Ok(response);
     }
 }
