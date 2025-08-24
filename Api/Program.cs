@@ -23,4 +23,6 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 app.MapControllers();
 
+await app.Services.InitializeRoleAsync();
+
 app.Run();
