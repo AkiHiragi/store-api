@@ -102,4 +102,72 @@ public class ProductController(AppDbContext dbContext) : StoreController(dbConte
             });
         }
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ResponseServer>> UpdateProduct(int id, [FromBody] ProductUpdateDto dto)
+    {
+        try
+        {
+            if (ModelState.IsValid)
+            {
+                if (dto == null || dto.Id != id)
+                {
+                    return BadRequest(new ResponseServer
+                    {
+                        IsSuccess = false,
+                        StatusCode = HttpStatusCode.BadRequest,
+                        ErrorMessages = ["Несоответствие модели данных"]
+                    });
+                }
+
+                var productFromDb = await dbContext.Products.FindAsync(id);
+
+                if (productFromDb == null)
+                {
+                    return NotFound(new ResponseServer
+                    {
+                        IsSuccess = false,
+                        StatusCode = HttpStatusCode.NotFound,
+                        ErrorMessages = ["Продукт с данным id не найден"]
+                    });
+                }
+
+                productFromDb.Name = dto.Name;
+                productFromDb.Description = dto.Description;
+                productFromDb.SpecialTag = dto.SpecialTag;
+                productFromDb.Category = dto.Category;
+                productFromDb.Price = dto.Price;
+                if (dto.Image is { Length: > 0 })
+                {
+                    productFromDb.Image =
+                        $"https://place-hold.it/{Random.Shared.Next(200, 500)}x{Random.Shared.Next(200, 500)}";
+                }
+
+                dbContext.Products.Update(productFromDb);
+                await dbContext.SaveChangesAsync();
+
+                return Ok(new ResponseServer
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Result = productFromDb
+                });
+            }
+
+            return BadRequest(new ResponseServer
+            {
+                IsSuccess = false,
+                StatusCode = HttpStatusCode.BadRequest,
+                ErrorMessages = ["Модель не соответствует"]
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new ResponseServer
+            {
+                IsSuccess = false,
+                StatusCode = HttpStatusCode.BadRequest,
+                ErrorMessages = ["Что-то пошло не так", ex.Message]
+            });
+        }
+    }
 }
