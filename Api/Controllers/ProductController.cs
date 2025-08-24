@@ -170,4 +170,49 @@ public class ProductController(AppDbContext dbContext) : StoreController(dbConte
             });
         }
     }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<ResponseServer>> DeleteProductById(int id)
+    {
+        try
+        {
+            if (id <= 0)
+            {
+                return BadRequest(new ResponseServer
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ErrorMessages = ["Неверный id"]
+                });
+            }
+
+            var productFromDb = await dbContext.Products.FindAsync(id);
+            if (productFromDb == null)
+            {
+                return NotFound(new ResponseServer
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.NotFound,
+                    ErrorMessages = ["Продукт по указанному id не найден"]
+                });
+            }
+
+            dbContext.Products.Remove(productFromDb);
+            await dbContext.SaveChangesAsync();
+
+            return Ok(new ResponseServer
+            {
+                StatusCode = HttpStatusCode.NoContent
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new ResponseServer
+            {
+                IsSuccess = false,
+                StatusCode = HttpStatusCode.BadRequest,
+                ErrorMessages = ["Что-то пошло не так", ex.Message]
+            });
+        }
+    }
 }
