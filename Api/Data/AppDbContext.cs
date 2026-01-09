@@ -1,3 +1,4 @@
+using Api.Model;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,4 +11,6 @@ public class AppDbContext : IdentityDbContext
     {
 
     }
+
+    public DbSet<AppUser> AppUsers { get; set; }
 }

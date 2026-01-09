@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,7 @@ public static class PostgreSqlServiceExtension
 
         public void AddPostgreSqlIdentityContext()
         {
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>();
         }
     };
