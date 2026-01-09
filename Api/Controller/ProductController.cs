@@ -1,3 +1,4 @@
+using System.Net;
 using Api.Data;
 using Api.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,12 @@ public class ProductController : StoreController
     [HttpGet]
     public async Task<IActionResult> GetProducts()
     {
-        return Ok(await dbContext.Products.ToListAsync());
+        var response = new ResponseServer
+        {
+            StatusCode = HttpStatusCode.OK,
+            Result = await dbContext.Products.ToListAsync()
+        };
+
+        return Ok(response);
     }
 }
