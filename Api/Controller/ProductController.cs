@@ -1,6 +1,7 @@
 using System.Net;
 using Api.Data;
 using Api.Model;
+using Api.ProductDto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -56,5 +57,13 @@ public class ProductController : StoreController
             StatusCode = HttpStatusCode.OK,
             Result = product
         });
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<ResponseServer>> CreateProduct(
+        [FromBody] ProductCreateDto productCreateDto
+    )
+    {
+
     }
 }
