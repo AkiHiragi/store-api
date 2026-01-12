@@ -121,4 +121,82 @@ public class ProductController : StoreController
             });
         }
     }
+
+    [HttpPut]
+    public async Task<ActionResult<ResponseServer>> UpdateProduct(
+        int id, [FromBody] ProductUpdateDto productUpdateDto
+    )
+    {
+        try
+        {
+            if (ModelState.IsValid)
+            {
+                if (productUpdateDto == null
+                    || productUpdateDto.Id != id)
+                {
+                    return BadRequest(new ResponseServer
+                    {
+                        IsSuccess = false,
+                        StatusCode = HttpStatusCode.BadRequest,
+                        ErrorMessages = ["Несоответствие модели данных"]
+                    });
+                }
+                else
+                {
+                    var productFromDb = await dbContext
+                        .Products
+                        .FindAsync(id);
+
+                    if (productFromDb == null)
+                    {
+                        return NotFound(new ResponseServer
+                        {
+                            IsSuccess = false,
+                            StatusCode = HttpStatusCode.NotFound,
+                            ErrorMessages = ["Продукт с таким id не найден"]
+                        });
+                    }
+
+                    productFromDb.Name = productUpdateDto.Name;
+                    productFromDb.Description = productUpdateDto.Description;
+                    productFromDb.SpecialTag = productUpdateDto.SpecialTag;
+                    productFromDb.Category = productUpdateDto.Category;
+                    productFromDb.Price = productUpdateDto.Price;
+
+                    if (productUpdateDto.Image != null
+                        && productUpdateDto.Image.Length > 0)
+                    {
+                        productFromDb.Image = $"https://placehold.co/300";
+                    }
+
+                    dbContext.Products.Update(productFromDb);
+                    await dbContext.SaveChangesAsync();
+
+                    return Ok(new ResponseServer
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        Result = productFromDb
+                    });
+                }
+            }
+            else
+            {
+                return BadRequest(new ResponseServer
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ErrorMessages = ["Модель данных не подходит"]
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new ResponseServer
+            {
+                IsSuccess = false,
+                StatusCode = HttpStatusCode.BadRequest,
+                ErrorMessages = ["Что-то пошло не так", ex.Message]
+            });
+        }
+    }
 }
