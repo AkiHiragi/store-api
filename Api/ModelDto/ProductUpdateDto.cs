@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Api.ProductDto;
+namespace Api.ModelDto;
 
-public class ProductCreateDto
+public class ProductUpdateDto
 {
+    public int Id { get; set; }
     [Required]
     public string? Name { get; set; }
     [Required]
