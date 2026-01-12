@@ -27,7 +27,7 @@ public class ProductController : StoreController
         return Ok(response);
     }
 
-    [HttpGet]
+    [HttpGet("{id}", Name = nameof(GetProductById))]
     public async Task<IActionResult> GetProductById(int id)
     {
         if (id <= 0)
@@ -64,6 +64,61 @@ public class ProductController : StoreController
         [FromBody] ProductCreateDto productCreateDto
     )
     {
+        try
+        {
+            if (ModelState.IsValid)
+            {
+                if (productCreateDto.Image == null
+                    || productCreateDto.Image.Length == 0)
+                {
+                    return BadRequest(new ResponseServer
+                    {
+                        StatusCode = HttpStatusCode.BadRequest,
+                        IsSuccess = false,
+                        ErrorMessages = ["Изображение продукта не может быть пустым"]
+                    });
+                }
+                else
+                {
+                    var item = new Product
+                    {
+                        Name = productCreateDto.Name,
+                        Description = productCreateDto.Description,
+                        SpecialTag = productCreateDto.SpecialTag,
+                        Category = productCreateDto.Category,
+                        Price = productCreateDto.Price,
+                        Image = $"https://placehold.co/250"
+                    };
+                    await dbContext.Products.AddAsync(item);
+                    await dbContext.SaveChangesAsync();
 
+                    var response = new ResponseServer
+                    {
+                        StatusCode = HttpStatusCode.Created,
+                        Result = item
+                    };
+
+                    return CreatedAtRoute(nameof(GetProductById), new { id = item.Id }, response);
+                }
+            }
+            else
+            {
+                return BadRequest(new ResponseServer
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ErrorMessages = ["Модель данных не подходит"]
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new ResponseServer
+            {
+                IsSuccess = false,
+                StatusCode = HttpStatusCode.BadRequest,
+                ErrorMessages = ["Что-то поломалось", ex.Message]
+            });
+        }
     }
 }
